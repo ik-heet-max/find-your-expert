@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submission Form</title>
+    <style>
+        .message {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+    <div id="message" class="message"></div>
+    <form action="submit" id="submissionForm" method="POST">
+        <label for="name">Name:</label>
+	<input type="text" id="name" name="name" required><br><br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br><br>
+        <label for="message">Message:</label>
+	<textarea id="message" name="message" required></textarea><br><br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        document.getElementById('submissionForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+	    const formData = new FormData(event.target);
+	    const plainFormData = Object.fromEntries(formData);
+	    const formDataJsonString = JSON.stringify(plainFormData);
+
+            try {
+                const response = await fetch('/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: formDataJsonString
+                });
+
+                if (response.ok) {
+		    //console.log("hui govno');
+		    //alert('Успех!');
+                    showNotification('Success!', 'success');
+                    document.getElementById('submissionForm').reset();
+                } else {
+                    const error = await response.json();
+		    //alert('Жопа!');
+                    showNotification(error.detail, 'error');
+                }
+            } catch (error) {
+		//alert('Супержопа!');
+                showNotification('An error occurred. Please try again.', 'error');
+            }
+        });
+
+        function showNotification(message, type) {
+            const notification = document.getElementById('message');
+            notification.textContent = message;
+            notification.className = `${type}`;
+            notification.style.display = 'block';
+
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
+
