@@ -44,7 +44,7 @@
 	    const formDataJsonString = JSON.stringify(plainFormData);
 
             try {
-                const response = await fetch('/submit', {
+                const response = await fetch('https://109.234.36.116:8443/submit', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
